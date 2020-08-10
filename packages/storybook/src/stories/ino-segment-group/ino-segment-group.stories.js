@@ -5,7 +5,7 @@ import withStencilReadme from '_local-storybookcore/with-stencil-readme';
 import './ino-segment-group.scss';
 import addons from '@storybook/addons';
 import CoreEvents from '@storybook/core-events';
-import { text } from '@storybook/addon-knobs';
+import { boolean, text } from '@storybook/addon-knobs';
 
 function subscribeToComponentEvents() {
   // == event block
@@ -47,10 +47,38 @@ storiesOf('Buttons|<ino-segment-group>', module)
             }
         </style>
         <ino-segment-group id="segment-grp">
-            <ino-segment-button value="1" class="customizable-segment-btn">Option 1</ino-segment-button>
-            <ino-segment-button value="2" class="customizable-segment-btn">Option 2</ino-segment-button>
-            <ino-segment-button value="3" class="customizable-segment-btn">Option 3</ino-segment-button>
-            <ino-segment-button value="4" class="customizable-segment-btn">Option 4</ino-segment-button>
+            <ino-segment-button
+                value="1"
+                class="customizable-segment-btn"
+                disabled="${boolean('disabled', false, 'General')}"
+                ino-dense="${boolean('ino-dense', false, 'General')}"
+            >
+            Option 1
+            </ino-segment-button>
+            <ino-segment-button
+                value="2"
+                class="customizable-segment-btn"
+                disabled="${boolean('disabled', false, 'General')}"
+                ino-dense="${boolean('ino-dense', false, 'General')}"
+            >
+            Option 2
+            </ino-segment-button>
+            <ino-segment-button
+                value="3"
+                class="customizable-segment-btn"
+                disabled="${boolean('disabled', false, 'General')}"
+                ino-dense="${boolean('ino-dense', false, 'General')}"
+            >
+            Option 3
+            </ino-segment-button>
+            <ino-segment-button
+                value="4"
+                class="customizable-segment-btn"
+                disabled="${boolean('disabled', false, 'General')}"
+                ino-dense="${boolean('ino-dense', false, 'General')}"
+            >
+            Option 4
+            </ino-segment-button>
         </ino-segment-group>
     </div>
     <div class="story-segment-group">

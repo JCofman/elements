@@ -5,6 +5,7 @@ import withStencilReadme from '_local-storybookcore/with-stencil-readme';
 import './ino-segment-group.scss';
 import addons from '@storybook/addons';
 import CoreEvents from '@storybook/core-events';
+import { text } from '@storybook/addon-knobs';
 
 function subscribeToComponentEvents() {
   // == event block
@@ -27,16 +28,32 @@ function subscribeToComponentEvents() {
 }
 
 storiesOf('Buttons|<ino-segment-group>', module)
-    .addDecorator(withStencilReadme(componentReadme))
-    .addDecorator(story => {
-      addons
-        .getChannel()
-        .emit(CoreEvents.REGISTER_SUBSCRIPTION, subscribeToComponentEvents);
-      return story();
-    })
-    .add('Default usage', () => /* html */`
+  .addDecorator(withStencilReadme(componentReadme))
+  .addDecorator(story => {
+    addons
+      .getChannel()
+      .emit(CoreEvents.REGISTER_SUBSCRIPTION, subscribeToComponentEvents);
+    return story();
+  })
+  .add('Default usage', () => /* html */`
+    <h4>Customizable group</h4>
     <div class="story-segment-group">
-
+        <style>
+            ino-segment-button.customizable-segment-btn {
+                --segment-button-color: ${text('--segment-button-color', '#c1c1c1', 'Custom Properties')};
+                --segment-button-active-color: ${text('--segment-button-active-color', '#0d10f3', 'Custom Properties')};
+                --segment-button-hover-color: ${text('--segment-button-hover-color', '#5d60f7', 'Custom Properties')};
+                --segment-button-disabled-color: ${text('--segment-button-disabled-color', '#777777', 'Custom Properties')};
+            }
+        </style>
+        <ino-segment-group id="segment-grp">
+            <ino-segment-button value="1" class="customizable-segment-btn">Option 1</ino-segment-button>
+            <ino-segment-button value="2" class="customizable-segment-btn">Option 2</ino-segment-button>
+            <ino-segment-button value="3" class="customizable-segment-btn">Option 3</ino-segment-button>
+            <ino-segment-button value="4" class="customizable-segment-btn">Option 4</ino-segment-button>
+        </ino-segment-group>
+    </div>
+    <div class="story-segment-group">
         <h4>Dense group with third option checked</h4>
         <ino-segment-group value="3" id="dense-segment-grp">
             <ino-segment-button ino-dense value="1">Option 1</ino-segment-button>
@@ -57,5 +74,5 @@ storiesOf('Buttons|<ino-segment-group>', module)
         <ino-segment-group id="single-segment-grp">
             <ino-segment-button value="1">Option 1</ino-segment-button>
         </ino-segment-group>
-    </div>
+      </div>
     `);

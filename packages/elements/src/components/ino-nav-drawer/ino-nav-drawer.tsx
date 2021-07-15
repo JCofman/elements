@@ -31,16 +31,17 @@ export class NavDrawer implements ComponentInterface {
    * An internal instance of the material design drawer.
    */
   private drawerInstance: MDCDrawer;
+  private drawerEl: HTMLElement;
 
   @Element() el!: HTMLElement;
 
   /**
    * Marks this element as open. (**unmanaged**)
    */
-  @Prop() inoOpen?: boolean = false;
+  @Prop() open?: boolean = false;
 
-  @Watch('inoOpen')
-  inoOpenChanged(newOpen: boolean) {
+  @Watch('open')
+  openChanged(newOpen: boolean) {
     if (this.drawerInstance) {
       this.drawerInstance.open = newOpen;
     }
@@ -50,13 +51,13 @@ export class NavDrawer implements ComponentInterface {
    * Side from which the drawer will appear.
    * Possible values: `left` (default), `right`.
    */
-  @Prop() inoAnchor?: NavDrawerAnchor = 'left';
+  @Prop() anchor?: NavDrawerAnchor = 'left';
 
   /**
    * The variant to use for the drawer
    * Possible values: `docked` (default), `dismissible`, `modal`.
    */
-  @Prop() inoVariant?: NavDrawerVariant = 'docked';
+  @Prop() variant?: NavDrawerVariant = 'docked';
 
   componentDidLoad() {
     this.drawerInstance = new MDCDrawer(
@@ -64,15 +65,14 @@ export class NavDrawer implements ComponentInterface {
     );
     // set initial value of open state
     if (this.drawerInstance) {
-      this.drawerInstance.open = this.inoOpen || false;
+      this.drawerInstance.open = this.open || false;
     }
 
-    this.el.shadowRoot
-      .querySelector('.mdc-drawer__toggle')
-      .addEventListener('click', this.toggleDrawer);
+    this.drawerEl.addEventListener('MDCDrawer:closed', this.closeDrawer);
   }
 
   disconnectedCallback() {
+    this.drawerEl.removeEventListener('MDCDrawer:closed', this.closeDrawer);
     this.drawerInstance?.destroy();
   }
 
@@ -81,32 +81,37 @@ export class NavDrawer implements ComponentInterface {
    */
   @Event() openChange!: EventEmitter<boolean>;
 
+  closeDrawer = (e: Event) => {
+    e.preventDefault();
+    this.openChange.emit(false);
+  };
+
   toggleDrawer = (e: Event) => {
-    const newOpenState = !this.inoOpen;
+    const newOpenState = !this.open;
     this.openChange.emit(newOpenState);
     e.stopPropagation();
   };
 
   render() {
-    const { inoAnchor, inoVariant } = this;
+    const { anchor, variant } = this;
 
     const classDrawer = classNames({
       'mdc-drawer': true,
-      'mdc-drawer--docked': inoVariant === 'docked',
+      'mdc-drawer--docked': variant === 'docked',
       'mdc-drawer--dismissible':
-        inoVariant === 'dismissible' || inoVariant === 'docked', // docked is a modifier of MDC's dismissible inoVariant
-      'mdc-drawer--modal': inoVariant === 'modal',
-      'mdc-drawer--anchor-left': inoAnchor === 'left',
-      'mdc-drawer--anchor-right': inoAnchor === 'right',
+        variant === 'dismissible' || variant === 'docked', // docked is a modifier of MDC's dismissible inoVariant
+      'mdc-drawer--modal': variant === 'modal',
+      'mdc-drawer--anchor-left': anchor === 'left',
+      'mdc-drawer--anchor-right': anchor === 'right',
     });
 
     const classAppContent = classNames({
       'mdc-drawer-app-content':
-        inoVariant === 'docked' || inoVariant === 'dismissible',
+        variant === 'docked' || variant === 'dismissible',
     });
 
     const nav = (
-      <aside class={classDrawer}>
+      <aside class={classDrawer} ref={(el) => (this.drawerEl = el)}>
         <div class="mdc-drawer__header">
           <slot name="header">
             <div class="mdc-drawer__logo">
@@ -124,7 +129,11 @@ export class NavDrawer implements ComponentInterface {
 
         <div class="mdc-drawer__footer">
           <slot name="footer"></slot>
-          <ino-icon-button class="mdc-drawer__toggle" ino-icon="arrow_right" />
+          <ino-icon-button
+            class="mdc-drawer__toggle"
+            icon="arrow_right"
+            onClick={this.toggleDrawer}
+          />
         </div>
       </aside>
     );
@@ -138,7 +147,7 @@ export class NavDrawer implements ComponentInterface {
     return (
       <Host>
         {nav}
-        {inoVariant === 'modal' && <div class="mdc-drawer-scrim"></div>}
+        {variant === 'modal' && <div class="mdc-drawer-scrim"></div>}
         {main}
       </Host>
     );

@@ -15,6 +15,7 @@
     "clean:root": "shx rm -rf node_modules",
     "update:commit-scopes": "node scripts/generateCommitScopeEnum.js",
     "lint": "lerna run lint",
+    "lint:fix": "lerna run lint:fix",
     "format": "yarn prettier --write '**/*.{js,jsx,ts,tsx,md,html,css,scss}'",
     "lerna:version": "lerna version --conventional-commits --no-changelog",
     "preversion": "yarn build && yarn test",
@@ -22,13 +23,14 @@
     "postversion": "git add -A",
     "publish:yalc": "node ./scripts/publishYalc.js",
     "publish:canary": "yarn lerna publish --no-verify-access --canary --exact --preid next.$(git rev-parse --short HEAD) --force-publish='*'",
-    "publish:npm": "yarn lerna publish --conventional-commits --no-changelog"
+    "publish:npm": "yarn lerna publish --conventional-commits --no-changelog",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@commitlint/config-lerna-scopes": "^8.2.0",
-    "husky": "^4.3.7",
+    "husky": "^6.0.0",
     "js-yaml": "^3.14.0",
     "lint-staged": "^10.5.3",
     "prettier": "^2.1.2",
@@ -42,12 +44,6 @@
   "dependencies": {
     "lerna": "^3.18.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "yarn update:commit-scopes && commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "workspaces": {
     "packages": [
       "packages/*",
@@ -56,9 +52,12 @@
     "nohoist": [
       "**/@types/jasmine",
       "**/@types/jasminewd2",
+      "**/@types/eslint",
+      "**/@types/estree",
+      "**/@types/eslint-scope",
       "**/flatpickr"
     ]
   },
   "name": "core",
-  "version": "3.0.0"
+  "version": "4.0.0"
 }

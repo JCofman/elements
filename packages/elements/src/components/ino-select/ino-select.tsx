@@ -13,6 +13,9 @@ import {
 } from '@stencil/core';
 import classNames from 'classnames';
 
+/**
+ * @slot default - One or more `ino-option(-group)`
+ */
 @Component({
   tag: 'ino-select',
   styleUrl: 'ino-select.scss',
@@ -20,7 +23,7 @@ import classNames from 'classnames';
 })
 export class Select implements ComponentInterface {
   // An internal instance of the material design form field.
-  private mdcSelectInstance: MDCSelect;
+  private mdcSelectInstance?: MDCSelect;
   private nativeInputElement?: HTMLInputElement;
 
   @Element() el!: HTMLElement;
@@ -44,17 +47,17 @@ export class Select implements ComponentInterface {
    * If true, an *optional* message is displayed if not required,
    * otherwise a * marker is displayed if required
    */
-  @Prop() inoShowLabelHint?: boolean;
+  @Prop() showLabelHint?: boolean;
 
   /**
    * The label of this element
    */
-  @Prop() inoLabel?: string;
+  @Prop() label?: string;
 
   /**
    * Styles this select box as outlined element.
    */
-  @Prop() inoOutline?: boolean;
+  @Prop() outline?: boolean;
 
   /**
    * The value of this element. (**unmanaged**)
@@ -78,7 +81,7 @@ export class Select implements ComponentInterface {
 
     if (this.value) {
       this.setSelectValue(this.value);
-    } else if (this.mdcSelectInstance.value) {
+    } else if (this.mdcSelectInstance?.value) {
       this.value = this.mdcSelectInstance.value;
     }
   }
@@ -91,7 +94,9 @@ export class Select implements ComponentInterface {
     if (this.nativeInputElement) {
       this.nativeInputElement.value = value;
     }
-    this.mdcSelectInstance.value = value;
+    if (this.mdcSelectInstance) {
+      this.mdcSelectInstance.value = value;
+    }
   }
 
   @Listen('MDCSelect:change')
@@ -126,8 +131,8 @@ export class Select implements ComponentInterface {
     const classSelect = classNames({
       'mdc-select': true,
       'mdc-select--disabled': this.disabled,
-      'mdc-select--outlined': this.inoOutline,
-      'mdc-select--filled': !this.inoOutline,
+      'mdc-select--outlined': this.outline,
+      'mdc-select--filled': !this.outline,
       'mdc-select--required': this.required,
     });
 
@@ -150,11 +155,11 @@ export class Select implements ComponentInterface {
             </div>
             {this.renderDropdownIcon()}
             <ino-label
-              ino-outline={this.inoOutline}
-              ino-text={this.inoLabel}
-              ino-required={this.required}
-              ino-disabled={this.disabled}
-              ino-show-hint={this.inoShowLabelHint}
+              outline={this.outline}
+              text={this.label}
+              required={this.required}
+              disabled={this.disabled}
+              show-hint={this.showLabelHint}
             />
           </div>
 

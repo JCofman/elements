@@ -18,6 +18,8 @@ import classNames from 'classnames';
   shadow: false,
 })
 export class Image implements ComponentInterface {
+  private imageEl: HTMLImageElement;
+
   @Element() el!: HTMLElement;
 
   /**
@@ -71,42 +73,47 @@ export class Image implements ComponentInterface {
   @Prop() usemap?: string;
 
   /**
+   * Icon used for fallback image if image can not be loaded
+   */
+  @Prop() fallbackIcon: string = 'image_not_available';
+
+  /**
    * Indicates that the image is a part of an image list component
    */
-  @Prop() inoImgListItem: boolean = false;
+  @Prop() imgListItem: boolean = false;
 
   /**
    * Sets the label of the image. Note: Only works if image is part of
    * an ino-img-list component.
    */
-  @Prop() inoLabel?: string;
+  @Prop() label?: string;
 
   /**
    * The ratio width of this image (default = 1).
-   * Use this attribute together with `ino-ratio-height` to reserve a
+   * Use this attribute together with `ratio-height` to reserve a
    * space for the image during rendering and to prevent jumping contents.
    */
-  @Prop() inoRatioWidth?: number = 1;
-  @Watch('inoRatioWidth')
-  inoRatioWidthChanged() {
+  @Prop() ratioWidth?: number = 1;
+  @Watch('ratioWidth')
+  ratioWidthChanged() {
     this.computeRatio();
   }
 
   /**
    * The ratio height for this image (default = 1).
-   * Use this attribute together with `ino-ratio-width` to reserve a
+   * Use this attribute together with `ratio-width` to reserve a
    * space for the image during rendering and to prevent jumping contents.
    */
-  @Prop() inoRatioHeight?: number = 1;
-  @Watch('inoRatioHeight')
-  inoRatioHeightChanged() {
+  @Prop() ratioHeight?: number = 1;
+  @Watch('ratioHeight')
+  ratioHeightChanged() {
     this.computeRatio();
   }
 
   /**
    * If true, styles the image with rounded borders.
    */
-  @Prop() inoRounded?: boolean;
+  @Prop() rounded?: boolean;
 
   /**
    * State containing the composed ratio width for this image.
@@ -119,9 +126,10 @@ export class Image implements ComponentInterface {
   }
 
   componentDidLoad(): void {
-    if (!this.inoImgListItem) {
+    if (!this.imgListItem) {
       this.el.querySelector('div').style.paddingTop = this.composedRatioHeight;
     }
+    this.imageEl.onerror = () => this.handleError();
   }
 
   private computeFixedDimensions() {
@@ -134,24 +142,30 @@ export class Image implements ComponentInterface {
   }
 
   private computeRatio() {
-    const ratio = (this.inoRatioHeight / this.inoRatioWidth) * 100;
+    const ratio = (this.ratioHeight / this.ratioWidth) * 100;
     this.composedRatioHeight = `${ratio}%`;
+  }
+
+  private handleError() {
+    this.imageEl.nextElementSibling.classList.add(
+      'ino-img__fallback-icon--visible'
+    );
   }
 
   render() {
     const hostClasses = classNames({
-      'ino-img__rounded': this.inoRounded,
-      'mdc-image-list__item': this.inoImgListItem,
+      'ino-img__rounded': this.rounded,
+      'mdc-image-list__item': this.imgListItem,
     });
 
     const divClasses = classNames({
-      'ino-img__composer': !this.inoImgListItem,
-      'mdc-image-list__image-aspect-container': this.inoImgListItem,
+      'ino-img__composer': !this.imgListItem,
+      'mdc-image-list__image-aspect-container': this.imgListItem,
     });
 
     const imgClasses = classNames({
-      'ino-img__image': !this.inoImgListItem,
-      'mdc-image-list__image': this.inoImgListItem,
+      'ino-img__image': !this.imgListItem,
+      'mdc-image-list__image': this.imgListItem,
     });
 
     return (
@@ -161,6 +175,7 @@ export class Image implements ComponentInterface {
             class={imgClasses}
             alt={this.alt}
             decoding={this.decoding}
+            ref={(ref) => (this.imageEl = ref)}
             sizes={this.sizes}
             src={this.src}
             srcset={this.srcset}
@@ -168,10 +183,13 @@ export class Image implements ComponentInterface {
             height={!isNaN(this.height) ? this.height : undefined}
             width={!isNaN(this.width) ? this.width : undefined}
           />
+          <div class="ino-img__fallback-icon">
+            <ino-icon icon={this.fallbackIcon} />
+          </div>
         </div>
-        {this.inoImgListItem && (
+        {this.imgListItem && (
           <div class="mdc-image-list__supporting">
-            <span class="mdc-image-list__label">{this.inoLabel}</span>
+            <span class="mdc-image-list__label">{this.label}</span>
           </div>
         )}
       </Host>

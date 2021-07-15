@@ -16,7 +16,7 @@ document
 ```
 
 ```html
-<ino-card ino-selected="<boolean>" ino-disable-elevation="<boolean>">
+<ino-card selected="<boolean>" disable-elevation="<boolean>">
   <div slot="header"><!-- Any content --></div>
   <div slot="content"><!-- Any content --></div>
   <div slot="footer"><!-- Any content --></div>
@@ -53,10 +53,10 @@ class MyComponent extends Component {
 
 ## Properties
 
-| Property              | Attribute               | Description                                                        | Type      | Default |
-| --------------------- | ----------------------- | ------------------------------------------------------------------ | --------- | ------- |
-| `inoDisableElevation` | `ino-disable-elevation` | Disables the hover effect if true                                  | `boolean` | `false` |
-| `inoSelected`         | `ino-selected`          | Selects the card and displays a check mark icon on top of the card | `boolean` | `false` |
+| Property           | Attribute           | Description                                                        | Type      | Default |
+| ------------------ | ------------------- | ------------------------------------------------------------------ | --------- | ------- |
+| `disableElevation` | `disable-elevation` | Disables the hover effect if true                                  | `boolean` | `false` |
+| `selected`         | `selected`          | Selects the card and displays a check mark icon on top of the card | `boolean` | `false` |
 
 
 ## Slots
@@ -70,10 +70,16 @@ class MyComponent extends Component {
 
 ## CSS Custom Properties
 
-| Name                          | Description                        |
-| ----------------------------- | ---------------------------------- |
-| `--ino-card-background-color` | background color of the check mark |
-| `--ino-card-color`            | check mark color                   |
+| Name                                    | Description                            |
+| --------------------------------------- | -------------------------------------- |
+| `--ino-card-background-color`           | background color of the card           |
+| `--ino-card-background-color--active`   | background color of the card if active |
+| `--ino-card-background-color--focus`    | background color of the card on focus  |
+| `--ino-card-background-color--hover`    | background color of the card on hover  |
+| `--ino-card-border-color`               | border color of the card               |
+| `--ino-card-border-thickness`           | thickness of the border                |
+| `--ino-card-checkmark-background-color` | background color of the check mark     |
+| `--ino-card-checkmark-color`            | check mark color                       |
 
 
 ## Dependencies
